@@ -239,6 +239,7 @@ npm run build 2>&1 | tail -5
 ## Features Installed
 
 - **Element targeting:** Click Feedback -> crosshair mode -> select element -> dialog
+- **CSS Selector:** Generates readable selectors with ID shortcuts, nth-of-type disambiguation, and Tailwind state prefix filtering (hover:, dark:, focus:, group-)
 - **Dual screenshots:** Global (JPEG 0.6, max 1MB) + Element (JPEG 0.7, max 500KB)
 - **Console errors:** Last 10 captured automatically
 - **User Agent + Page URL:** Sent with every submission

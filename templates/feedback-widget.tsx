@@ -55,22 +55,46 @@ const feedbackTypes: {
 // ─── CSS Selector Helper ───────────────────────────────────────────
 
 function getCssSelector(el: HTMLElement): string {
-  if (el.id) return `#${el.id}`
   const parts: string[] = []
   let current: HTMLElement | null = el
-  while (current && current !== document.body) {
+
+  while (current && current !== document.body && parts.length < 5) {
     let selector = current.tagName.toLowerCase()
+
+    // ID shortcut — most specific, stop here
+    if (current.id) {
+      selector += `#${current.id}`
+      parts.unshift(selector)
+      break
+    }
+
+    // Classes (filter Tailwind state prefixes)
     if (current.className && typeof current.className === "string") {
       const classes = current.className
         .split(/\s+/)
-        .filter((c) => c && !c.startsWith("hover:") && c.length < 30)
+        .filter((c) => c && !c.startsWith("hover:") && !c.startsWith("dark:") && !c.startsWith("focus:") && !c.startsWith("group-") && c.length < 30)
         .slice(0, 2)
-      if (classes.length) selector += `.${classes.join(".")}`
+      if (classes.length > 0) {
+        selector += `.${classes.join(".")}`
+      }
     }
+
+    // nth-of-type disambiguation for sibling elements
+    const parent = current.parentElement
+    if (parent) {
+      const siblings = Array.from(parent.children).filter(
+        (child) => child.tagName === current!.tagName
+      )
+      if (siblings.length > 1) {
+        const index = siblings.indexOf(current) + 1
+        selector += `:nth-of-type(${index})`
+      }
+    }
+
     parts.unshift(selector)
     current = current.parentElement
-    if (parts.length >= 3) break
   }
+
   return parts.join(" > ")
 }
 
@@ -531,10 +555,9 @@ export function FeedbackWidget() {
               <CollapsibleSection title="Targeted Element" icon={Crosshair} badge={targetedElement.tagName} defaultOpen={false}>
                 <div className="space-y-2">
                   <div className="space-y-1 text-xs text-muted-foreground">
-                    <p className="break-all"><span className="font-medium">Selector:</span>{" "}
-                      <code className="rounded bg-muted px-1 text-xs break-all">{targetedElement.selector}</code></p>
+                    <p className="font-mono text-[11px] break-all leading-relaxed text-primary/80">{targetedElement.selector}</p>
                     <p><span className="font-medium">Tag:</span>{" "}
-                      <code className="rounded bg-muted px-1 text-xs">{targetedElement.tagName}</code></p>
+                      <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">{targetedElement.tagName}</code></p>
                     {targetedElement.text && (
                       <p className="break-words"><span className="font-medium">Text:</span>{" "}
                         <span className="italic">&quot;{targetedElement.text.slice(0, 80)}{targetedElement.text.length > 80 ? "..." : ""}&quot;</span></p>
