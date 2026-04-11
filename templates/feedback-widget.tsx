@@ -311,7 +311,7 @@ export function FeedbackWidget() {
     const overlay = document.createElement("div")
     overlay.style.cssText = `
       position: fixed; pointer-events: none; z-index: 99999;
-      border: 2px solid hsl(var(--primary)); background: hsl(var(--primary) / 0.08);
+      border: 3px solid var(--primary); background: color-mix(in srgb, var(--primary) 8%, transparent);
       border-radius: 4px; transition: all 0.1s ease; display: none;
     `
     document.body.appendChild(overlay)
@@ -319,10 +319,10 @@ export function FeedbackWidget() {
     const tooltip = document.createElement("div")
     tooltip.style.cssText = `
       position: fixed; z-index: 100000; pointer-events: none;
-      background: hsl(var(--popover)); color: hsl(var(--popover-foreground)); font-size: 11px;
+      background: var(--popover); color: var(--popover-foreground); font-size: 11px;
       padding: 4px 8px; border-radius: 4px; display: none;
       max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-      border: 1px solid hsl(var(--border));
+      border: 1px solid var(--border);
     `
     document.body.appendChild(tooltip)
     document.body.style.cursor = "crosshair"
